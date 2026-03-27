@@ -1,0 +1,9 @@
+# Original full-resolution photos (too large for git)
+photos/
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Editor
+.vscode/

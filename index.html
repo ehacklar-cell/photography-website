@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edward — Photography</title>
+  <meta name="description" content="Photography by Edward — Vence, France.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Tokens ─────────────────────────────────────── */
+    :root {
+      --bg:       #e8e3dc;
+      --text:     #1c1a17;
+      --dim:      #a09b94;
+      --faint:    rgba(28,26,23,0.10);
+      --nav-h:    58px;
+      --font:     'Jost', 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Navigation ─────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 44px;
+      background: var(--bg);
+      z-index: 200;
+    }
+
+    .nav-logo {
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0.20em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 44px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 11.5px;
+      font-weight: 300;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      transition: opacity 0.22s;
+    }
+    .nav-links a:hover { opacity: 0.40; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 6px;
+    }
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--text);
+      transition: transform 0.28s, opacity 0.28s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+    /* Mobile nav */
+    .mobile-nav {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 190;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+    .mobile-nav.open { opacity: 1; pointer-events: all; }
+    .mobile-nav a {
+      font-size: 22px;
+      font-weight: 300;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .mobile-nav a:hover { opacity: 0.4; }
+
+    /* ─── Slideshow ───────────────────────────────────── */
+    #slideshow {
+      height: 100vh;
+      padding-top: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-img {
+      display: block;
+      max-height: calc(100vh - var(--nav-h) - 28px);
+      max-width: 52vw;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transition: opacity 0.32s ease;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .slide-img.fading { opacity: 0; }
+
+    /* Arrows */
+    .slide-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 24px 20px;
+      color: var(--dim);
+      font-size: 20px;
+      line-height: 1;
+      transition: color 0.2s, opacity 0.2s;
+      user-select: none;
+      z-index: 10;
+    }
+    .slide-arrow:hover { color: var(--text); }
+    #slide-prev { left: 12px; }
+    #slide-next { right: 12px; }
+
+    /* Counter */
+    #slide-counter {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10.5px;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* ─── About ──────────────────────────────────────── */
+    #about {
+      padding: 120px 44px 130px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .section-tag {
+      font-size: 10px;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--dim);
+      display: block;
+      margin-bottom: 40px;
+    }
+
+    .about-lead {
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 1.72;
+      color: var(--text);
+      margin-bottom: 32px;
+      letter-spacing: 0.01em;
+    }
+
+    .about-body {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.85;
+      color: #6e6a63;
+      margin-bottom: 20px;
+      letter-spacing: 0.01em;
+    }
+
+    .about-rule {
+      border: none;
+      border-top: 1px solid var(--faint);
+      margin: 52px 0;
+    }
+
+    .about-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .about-meta-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--faint);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .about-meta-item:nth-child(odd)  { padding-right: 40px; }
+    .about-meta-item:nth-child(even) { padding-left: 40px; border-left: 1px solid var(--faint); }
+    .meta-key {
+      font-size: 9.5px;
+      letter-spacing: 0.30em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .meta-val {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── Contact ────────────────────────────────────── */
+    #contact {
+      border-top: 1px solid var(--faint);
+      padding: 100px 44px 120px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-row {
+      margin-bottom: 36px;
+    }
+    .form-row label {
+      display: block;
+      font-size: 9.5px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 12px;
+    }
+    .form-row input,
+    .form-row textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(28,26,23,0.20);
+      font-family: var(--font);
+      font-weight: 300;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      padding: 8px 0 12px;
+      outline: none;
+      resize: none;
+      transition: border-color 0.24s;
+      caret-color: var(--text);
+    }
+    .form-row input::placeholder,
+    .form-row textarea::placeholder {
+      color: rgba(28,26,23,0.22);
+    }
+    .form-row input:focus,
+    .form-row textarea:focus {
+      border-bottom-color: var(--text);
+    }
+    .form-row textarea { height: 100px; }
+
+    .form-submit {
+      margin-top: 12px;
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text);
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: gap 0.28s, opacity 0.2s;
+    }
+    .form-submit:hover { gap: 18px; }
+    .form-submit .arr { font-size: 15px; }
+    .form-submit:disabled { opacity: 0.4; cursor: default; }
+
+    /* ─── Footer ─────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--faint);
+      padding: 32px 44px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-name {
+      font-size: 12px;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .footer-copy {
+      font-size: 10.5px;
+      letter-spacing: 0.10em;
+      color: rgba(28,26,23,0.28);
+    }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 800px) {
+      nav { padding: 0 26px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .slide-img { max-width: 82vw; }
+      #slide-prev { left: 4px; }
+      #slide-next { right: 4px; }
+
+      #about { padding: 90px 26px 100px; }
+      .about-meta { grid-template-columns: 1fr; }
+      .about-meta-item:nth-child(even) { padding-left: 0; border-left: none; }
+
+      #contact { padding: 80px 26px 100px; }
+      footer { padding: 28px 26px; }
+    }
+    @media (max-width: 480px) {
+      .slide-img { max-width: 92vw; }
+      .about-lead { font-size: 18px; }
+      footer { flex-direction: column; gap: 10px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Mobile nav overlay -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="#slideshow" onclick="closeMobileNav()">Vence</a>
+  <a href="#about"     onclick="closeMobileNav()">About</a>
+  <a href="#contact"   onclick="closeMobileNav()">Contact</a>
+</div>
+
+<!-- Navigation -->
+<nav>
+  <a href="#slideshow" class="nav-logo">Edward</a>
+  <ul class="nav-links">
+    <li><a href="#slideshow">Vence</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Slideshow -->
+<section id="slideshow">
+  <button class="slide-arrow" id="slide-prev" aria-label="Previous">&#x2039;</button>
+  <img class="slide-img" id="slide-img" src="" alt="Photography by Edward">
+  <button class="slide-arrow" id="slide-next" aria-label="Next">&#x203A;</button>
+  <div id="slide-counter">01 / 91</div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <span class="section-tag">About</span>
+  <p class="about-lead">I am a photographer drawn to the quiet weight of light — the way it catches on old stone, dissolves into shadow, or holds a single unrepeatable moment.</p>
+  <p class="about-body">My work lives at the intersection of documentary instinct and fine-art stillness. I do not chase the decisive moment so much as wait for it, trusting that patience and attention are the only real tools.</p>
+  <p class="about-body">This series was made in Vence, a medieval hill town in the south of France, where the light falls like a conversation — oblique, unhurried, full of memory.</p>
+  <hr class="about-rule">
+  <div class="about-meta">
+    <div class="about-meta-item">
+      <span class="meta-key">Based in</span>
+      <span class="meta-val">France</span>
+    </div>
+    <div class="about-meta-item">
+      <span class="meta-key">Camera</span>
+      <span class="meta-val">Fujifilm X Series</span>
+    </div>
+    <div class="about-meta-item">
+      <span class="meta-key">Style</span>
+      <span class="meta-val">Documentary &amp; Fine Art</span>
+    </div>
+    <div class="about-meta-item">
+      <span class="meta-key">Available for</span>
+      <span class="meta-val">Commissions &amp; Exhibitions</span>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact">
+  <span class="section-tag">Contact</span>
+  <form onsubmit="handleSubmit(event)">
+    <div class="form-row">
+      <label for="f-name">Name</label>
+      <input type="text" id="f-name" placeholder="Your name" autocomplete="off">
+    </div>
+    <div class="form-row">
+      <label for="f-email">Email</label>
+      <input type="email" id="f-email" placeholder="your@email.com" autocomplete="off">
+    </div>
+    <div class="form-row">
+      <label for="f-msg">Message</label>
+      <textarea id="f-msg" placeholder="Tell me about your project…"></textarea>
+    </div>
+    <button type="submit" class="form-submit" id="submitBtn">
+      Send <span class="arr">&#x2192;</span>
+    </button>
+  </form>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span class="footer-name">Edward</span>
+  <span class="footer-copy">&copy; 2025</span>
+</footer>
+
+<script>
+  // ─── Photos ──────────────────────────────────────────
+  const photos = [];
+  for (let i = 2712; i <= 2802; i++) photos.push(`photos-web/DSCF${i}.JPG`);
+  const total = photos.length; // 91
+
+  let current = 0;
+  const imgEl    = document.getElementById('slide-img');
+  const counter  = document.getElementById('slide-counter');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function showPhoto(idx, instant) {
+    current = (idx + total) % total;
+    if (instant) {
+      imgEl.src = photos[current];
+    } else {
+      imgEl.classList.add('fading');
+      setTimeout(() => {
+        imgEl.src = photos[current];
+        const done = () => { imgEl.classList.remove('fading'); imgEl.onload = null; };
+        imgEl.onload = done;
+        if (imgEl.complete) done();
+      }, 280);
+    }
+    counter.textContent = `${pad(current + 1)} / ${pad(total)}`;
+  }
+
+  // Init
+  showPhoto(0, true);
+
+  document.getElementById('slide-prev').addEventListener('click', () => showPhoto(current - 1));
+  document.getElementById('slide-next').addEventListener('click', () => showPhoto(current + 1));
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (document.activeElement.tagName === 'INPUT' ||
+        document.activeElement.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft')  showPhoto(current - 1);
+    if (e.key === 'ArrowRight') showPhoto(current + 1);
+  });
+
+  // Swipe
+  let tx = 0;
+  document.getElementById('slideshow').addEventListener('touchstart', e => {
+    tx = e.changedTouches[0].clientX;
+  }, { passive: true });
+  document.getElementById('slideshow').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - tx;
+    if (Math.abs(dx) > 44) showPhoto(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  // ─── Mobile nav ──────────────────────────────────────
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
+  let open = false;
+
+  hamburger.addEventListener('click', () => {
+    open = !open;
+    hamburger.classList.toggle('open', open);
+    mobileNav.classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  function closeMobileNav() {
+    open = false;
+    hamburger.classList.remove('open');
+    mobileNav.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ─── Contact form ─────────────────────────────────────
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = 'Sent &#x2713;';
+    btn.disabled = true;
+    e.target.reset();
+  }
+</script>
+</body>
+</html>
