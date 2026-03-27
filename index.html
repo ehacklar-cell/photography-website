@@ -139,6 +139,15 @@
       transition: opacity 0.32s ease;
       user-select: none;
       -webkit-user-drag: none;
+      pointer-events: none;
+    }
+
+    /* Transparent overlay to block right-click on the image */
+    .slide-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      cursor: default;
     }
     .slide-img.fading { opacity: 0; }
 
@@ -380,7 +389,10 @@
 <!-- Slideshow -->
 <section id="slideshow">
   <button class="slide-arrow" id="slide-prev" aria-label="Previous">&#x2039;</button>
-  <img class="slide-img" id="slide-img" src="" alt="Photography by Edward">
+  <div style="position:relative; display:inline-flex;">
+    <img class="slide-img" id="slide-img" src="" alt="Photography by Edward" draggable="false">
+    <div class="slide-shield" id="slide-shield"></div>
+  </div>
   <button class="slide-arrow" id="slide-next" aria-label="Next">&#x203A;</button>
   <div id="slide-counter">01 / 91</div>
 </section>
@@ -509,6 +521,22 @@
     mobileNav.classList.remove('open');
     document.body.style.overflow = '';
   }
+
+  // ─── Image protection ────────────────────────────────
+  // Disable right-click on the whole page
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Block drag-to-desktop on images
+  document.addEventListener('dragstart', e => {
+    if (e.target.tagName === 'IMG') e.preventDefault();
+  });
+
+  // Block Ctrl/Cmd+S (save) and Ctrl/Cmd+U (view source)
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && ['s', 'u', 'p'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
 
   // ─── Contact form ─────────────────────────────────────
   function handleSubmit(e) {
